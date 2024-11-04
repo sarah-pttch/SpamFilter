@@ -6,11 +6,30 @@ public class TextComparator {
 
     public TextComparator() { }
 
+    /**
+     * The compareTexts method compares the input texts for similarities using the Levenshtein distance and gives an
+     * overall similarity score for each text. The overall similarity is the sum of the similarities of a text
+     * to each of the other input texts. If two texts are equal, their similarity is 1, if they are completely
+     * different, their similarity is 0.
+     * Upper and lower case characters are considered equal.
+     * Similarities below 0.5 (50%) are considered coincidental and are not included in the overall score.
+     * @param texts The texts that the method compares to each other for similarities
+     * @return an array of doubles containing the overall similarity scores of the input texts
+     */
     public double[] compareTexts(String[] texts) {
 
         // scores stores similarity scores to other texts per text
         double[] scores = new double[texts.length];
         LevenshteinDistance distance = new LevenshteinDistance();
+
+        //converting texts to all lower case so that upper and lower case letters are considered equal
+        for(int i = 0; i < texts.length; i++) {
+            try {
+                texts[i] = texts[i].toLowerCase();
+            } catch(NullPointerException e) {
+                System.out.println("At least one of the texts you entered seems to be null. Please check your input.");
+            }
+        }
 
         // comparing each text to each of the remaining texts in the array
         for(int i = 0; i < (texts.length - 1); i++) {
@@ -40,6 +59,15 @@ public class TextComparator {
         return scores;
     }
 
+    /**
+     * The calculateSpamProbabilities method calculates a probability (percentage) per input text indicating how likely
+     * a text is spam based on its similarities to the other input texts. It uses the compareTexts() method to determine
+     * similarities between the input texts. It sets the similarity scores of the input text in relation to the number
+     * of texts entered.
+     * Probabilities range between 0 and 100%.
+     * @param texts The texts for which the method calculates the spam probability
+     * @return an array of integers containing the rounded spam probabilities of the input texts
+     */
     public int[] calculateSpamProbabilities(String[] texts) {
         double[] scores = this.compareTexts(texts);
         // number of texts that each text was compared to
